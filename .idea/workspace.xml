@@ -5,11 +5,12 @@
       <config projectName="3d_game" targetName="uninstall" />
       <config projectName="3d_game" targetName="glfw" />
       <config projectName="3d_game" targetName="glad" />
+      <config projectName="3d_game" targetName="spdlog" />
       <config projectName="3d_game" targetName="3d_game" />
       <config projectName="3d_game" targetName="update_mappings" />
     </generated>
   </component>
-  <component name="CMakeSettings">
+  <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations />
   </component>
   <component name="ChangeListManager">
@@ -43,12 +44,18 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="cf.advertisement.text.has.clang-format" value="true" />
     <property name="cf.first.check.clang-format" value="false" />
     <property name="cidr.known.project.marker" value="true" />
     <property name="cmake.loaded.for.project" value="true" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="fileTemplates" />
   </component>
   <component name="RunManager" selected="CMake Application.3d_game">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="3d_game" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="3d_game" TARGET_NAME="3d_game" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="3d_game" RUN_TARGET_NAME="3d_game">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -60,6 +67,11 @@
       </method>
     </configuration>
     <configuration name="glfw" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="3d_game" TARGET_NAME="glfw" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="spdlog" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="3d_game" TARGET_NAME="spdlog" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -80,6 +92,7 @@
       <item itemvalue="CMake Application.glfw" />
       <item itemvalue="CMake Application.uninstall" />
       <item itemvalue="CMake Application.update_mappings" />
+      <item itemvalue="CMake Application.spdlog" />
     </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -94,7 +107,16 @@
       <workItem from="1653936430185" duration="208000" />
       <workItem from="1653936647843" duration="131000" />
       <workItem from="1653936788696" duration="70000" />
-      <workItem from="1653936867668" duration="1434000" />
+      <workItem from="1653936867668" duration="6586000" />
+      <workItem from="1654872026522" duration="2000" />
+      <workItem from="1655826741418" duration="2000" />
+      <workItem from="1656253899534" duration="419000" />
+      <workItem from="1656254548805" duration="1048000" />
+      <workItem from="1657566163032" duration="2136000" />
+      <workItem from="1657568388623" duration="271000" />
+      <workItem from="1657568782527" duration="1233000" />
+      <workItem from="1657570123473" duration="841000" />
+      <workItem from="1657578106067" duration="2108000" />
     </task>
     <servers />
   </component>
