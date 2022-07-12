@@ -4,15 +4,14 @@
 
 #include <glm/mat4x2.hpp>
 
-class Shader {
+class Shaders {
 public:
-	Shader();
-	~Shader();
+	Shaders();
+	~Shaders();
 
 	void Bind(bool state);
 
-	void UniformMat4(std::string_view name, const glm::mat4& matrix);
-	void Uniform1iv(std::string_view name, int* arr, int size);
+	int GetAttribLocation(std::string_view name) const;
 private:
 	std::uint32_t CreateShader(const char* source, std::uint32_t type) const;
 	int GetUniformLocation(std::string_view name);

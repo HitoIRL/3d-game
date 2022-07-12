@@ -3,7 +3,7 @@ project(3d_game)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(3d_game src/Main.cpp src/Core/Window.cpp src/Core/Shader.cpp src/Debug/Log.cpp)
+add_executable(3d_game src/Main.cpp src/Core/Window.cpp src/Core/Shaders.cpp src/Debug/Log.cpp)
 
 # deps
 add_subdirectory(deps/glfw)

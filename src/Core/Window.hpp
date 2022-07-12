@@ -16,7 +16,6 @@ public:
 	Window(const WindowSettings& settings);
 	~Window();
 
-	void SetBackgroundColor(const glm::vec4& color);
 	bool IsOpen() const;
 private:
 	GLFWwindow* _window;
