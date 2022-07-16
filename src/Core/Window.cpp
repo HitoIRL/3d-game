@@ -42,7 +42,7 @@ void __stdcall DebugCallback(GLenum source, GLenum type, GLuint id, GLenum sever
 	LOG_WARN("GL: {} type: {} severity: {} message: {}", src, tp, sv, message);
 }
 
-Window::Window(const WindowSettings& settings) {
+Window::Window(std::string_view title, const glm::uvec2& size) : size(size) {
 	if (!glfwInit()) {
 		LOG_ERROR("GLFW library iitialization failed");
 		std::exit(EXIT_FAILURE);
@@ -51,8 +51,9 @@ Window::Window(const WindowSettings& settings) {
 	// we want latest available version of gl
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-	_window = glfwCreateWindow(settings.size.x, settings.size.y, settings.title.data(), settings.fullscreen ? glfwGetPrimaryMonitor() : nullptr, nullptr);
+	_window = glfwCreateWindow(size.x, size.y, title.data(), nullptr, nullptr);
 	if (!_window) {
 		LOG_ERROR("Failed to create GLFW window");
 		glfwTerminate();
@@ -64,7 +65,7 @@ Window::Window(const WindowSettings& settings) {
 
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
-	glViewport(0, 0, settings.size.x, settings.size.y);
+	glViewport(0, 0, size.x, size.y);
 	glEnable(GL_DEPTH_TEST);
 
 	// enabling debug output
@@ -79,7 +80,7 @@ Window::~Window() {
 
 bool Window::IsOpen() const {
 	glfwSwapBuffers(_window);
-	//glClearBufferfv(GL_DEPTH, 0, glm::value_ptr(color));
+	//glClear(GL_COLOR_BUFFER_BIT);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glfwPollEvents();
 
@@ -87,4 +88,8 @@ bool Window::IsOpen() const {
 		glfwSetWindowShouldClose(_window, 1);
 
 	return !glfwWindowShouldClose(_window);
+}
+
+const glm::uvec2& Window::GetSize() const {
+	return size;
 }

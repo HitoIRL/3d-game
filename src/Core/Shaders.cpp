@@ -8,26 +8,31 @@
 constexpr auto VertexShader = R"glsl(
 #version 460 core
 
-layout(location = 0) in vec3 position;
-layout(location = 1) in vec3 color;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
 
-out vec3 vertex_color;
+out vec3 v_color;
 
-void main() {
-	gl_Position = vec4(position, 1.0);
-	vertex_color = color;
+vec3 remappedColour = (normal + vec3(1.f)) / 2.f;
+
+uniform mat4 transform;
+
+void main(){
+	gl_Position = transform * vec4((position * vec3(1.0f, 1.0f, -1.0f)) + (vec3(0, -0.5, 0)), 1.0f);
+
+	v_color = remappedColour;
 }
 )glsl";
 
 constexpr auto FragmentShader = R"glsl(
 #version 460 core
 
-in vec3 vertex_color;
+in vec3 v_color;
 
 out vec4 color;
 
 void main() {
-	color = vec4(vertex_color, 1.0);
+	color = vec4(v_color, 1.0);
 }
 )glsl";
 
@@ -57,6 +62,18 @@ void Shaders::Bind(bool state) {
 
 int Shaders::GetAttribLocation(std::string_view name) const {
 	return glGetAttribLocation(program, name.data());
+}
+
+void Shaders::UniformVec2(std::string_view name, const glm::vec2& value) {
+	glUniform2fv(GetUniformLocation(name), 1, glm::value_ptr(value));
+}
+
+void Shaders::UniformFloat(std::string_view name, float value) {
+	glUniform1f(GetUniformLocation(name), value);
+}
+
+void Shaders::UniformMat4(std::string_view name, const glm::mat4& value) {
+	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
 std::uint32_t Shaders::CreateShader(const char* source, std::uint32_t type) const {
