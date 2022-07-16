@@ -4,6 +4,7 @@
 
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
+#include <GLFW/glfw3.h>
 
 #include "Core/Window.hpp"
 #include "Core/Shaders.hpp"
@@ -12,7 +13,17 @@
 struct Vertex {
 	glm::vec3 position;
 	glm::vec3 normal;
-	//glm::vec2 texCoord;
+	glm::vec2 texCoord;
+};
+
+struct Texture {
+	std::uint32_t id;
+};
+
+struct Mesh {
+	std::vector<Vertex> vertices;
+	std::vector<std::uint32_t> indices;
+	std::vector<Texture> textures;
 };
 
 struct RawMeshData {
@@ -139,22 +150,10 @@ int main() {
 	auto cwd = std::filesystem::current_path();
 	LOG_INFO("Current working directory: {}", cwd.string());
 
-	auto meshData = ReadObjSplit("shuttle.obj");
+	auto meshData = ReadObjSplit("mesh.obj");
 
 	auto window = std::make_unique<Window>("3d game es", glm::vec2(1280, 720));
 	auto shaders = std::make_unique<Shaders>();
-
-	const std::array<Vertex, 3> vertices {{
-		{{ -0.5f, -0.5f, 0.01f }, { 1.0f, 0.0f, 0.0f }},
-		{{ 0.5f, -0.5f, -0.01f }, { 0.0f, 1.0f, 0.0f }},
-		{{ 0.0f, 0.5f, 0.01f }, { 0.0f, 0.0f, 1.0f }}
-	}};
-
-	const std::array<Vertex, 3> background {{
-		{{ -1.0f, -1.0f, 0.0f }, { 0.12f, 0.14f, 0.16f }},
-		{{ 3.0f, -1.0f, 0.0f }, { 0.12f, 0.14f, 0.16f }},
-		{{ -1.0f, 3.0f, 0.0f }, { 0.8f, 0.8f, 0.82f }}
-	}};
 
 	// i tried to make it as DSA as possible
 	auto createBuffer = [](const std::vector<Vertex>& vertices) -> std::uint32_t {
@@ -185,18 +184,19 @@ int main() {
 	// attach buffer to read from
 	glVertexArrayVertexBuffer(vao, 0, meshBuffer, 0, sizeof(Vertex));
 
-	auto trans = glm::mat4(1.0f);
-	trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(1.0, 0.0, 0.0));
-	trans = glm::scale(trans, glm::vec3(0.09, 0.09, 0.09));
-
 	glBindVertexArray(vao);
 	shaders->Bind(true);
-	shaders->UniformMat4("transform", trans);
 	//window->SetBackgroundColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 	LOG_INFO("Mesh object vertices size: {}", meshData.vertices.size());
 	while (window->IsOpen()) {
 		auto currentTime = std::chrono::duration<float>(std::chrono::system_clock::now() - startTime).count();
-		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)meshData.vertices.size());
+
+		auto trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, currentTime, glm::vec3(0.0, 1.0, 1.0));
+		trans = glm::scale(trans, glm::vec3(0.09, 0.09, 0.09));
+		shaders->UniformMat4("transform", trans);
+
+		glDrawArrays(GL_TRIANGLES, 0, meshData.vertices.size());
 	}
 
 	glDeleteVertexArrays(1, &vao);

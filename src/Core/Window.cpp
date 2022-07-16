@@ -80,8 +80,7 @@ Window::~Window() {
 
 bool Window::IsOpen() const {
 	glfwSwapBuffers(_window);
-	//glClear(GL_COLOR_BUFFER_BIT);
-	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glfwPollEvents();
 
 	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
