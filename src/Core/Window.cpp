@@ -5,41 +5,42 @@
 
 #include "../Debug/Log.hpp"
 
-// todo: move it somewhere else
-const std::unordered_map<GLenum, std::string> errorSourceMap {
-		{GL_DEBUG_SOURCE_API, "SOURCE_API"},
-		{GL_DEBUG_SOURCE_WINDOW_SYSTEM, "WINDOW_SYSTEM"},
-		{GL_DEBUG_SOURCE_SHADER_COMPILER, "SHADER_COMPILER"},
-		{GL_DEBUG_SOURCE_THIRD_PARTY, "THIRD_PARTY"},
-		{GL_DEBUG_SOURCE_APPLICATION, "APPLICATION"},
-		{GL_DEBUG_SOURCE_OTHER, "OTHER"}
-};
-
-const std::unordered_map<GLenum, std::string> errorTypeMap {
-		{GL_DEBUG_TYPE_ERROR, "ERROR"},
-		{GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR, "DEPRECATED_BEHAVIOR"},
-		{GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR, "UNDEFINED_BEHAVIOR"},
-		{GL_DEBUG_TYPE_PORTABILITY, "PORTABILITY"},
-		{GL_DEBUG_TYPE_PERFORMANCE, "PERFORMANCE"},
-		{GL_DEBUG_TYPE_OTHER, "OTHER"},
-		{GL_DEBUG_TYPE_MARKER, "MARKER"}
-};
-
-const std::unordered_map<GLenum, std::string> severityMap {
-		{GL_DEBUG_SEVERITY_HIGH, "HIGH"},
-		{GL_DEBUG_SEVERITY_MEDIUM, "MEDIUM"},
-		{GL_DEBUG_SEVERITY_LOW, "LOW"},
-		//{GL_DEBUG_SEVERITY_NOTIFICATION, "NOTIFICATION"}
-};
-
 void __stdcall DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
-	if (severity == GL_DEBUG_SEVERITY_NOTIFICATION)
-		return;
+	auto const src_str = [source]() {
+		switch (source)
+		{
+		case GL_DEBUG_SOURCE_API: return "API";
+		case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return "WINDOW SYSTEM";
+		case GL_DEBUG_SOURCE_SHADER_COMPILER: return "SHADER COMPILER";
+		case GL_DEBUG_SOURCE_THIRD_PARTY: return "THIRD PARTY";
+		case GL_DEBUG_SOURCE_APPLICATION: return "APPLICATION";
+		case GL_DEBUG_SOURCE_OTHER: return "OTHER";
+		}
+	}();
 
-	auto src = errorSourceMap.at(source);
-	auto tp = errorTypeMap.at(type);
-	auto sv = severityMap.at(severity);
-	LOG_WARN("GL: {} type: {} severity: {} message: {}", src, tp, sv, message);
+	auto const type_str = [type]() {
+		switch (type)
+		{
+		case GL_DEBUG_TYPE_ERROR: return "ERROR";
+		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEPRECATED_BEHAVIOR";
+		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return "UNDEFINED_BEHAVIOR";
+		case GL_DEBUG_TYPE_PORTABILITY: return "PORTABILITY";
+		case GL_DEBUG_TYPE_PERFORMANCE: return "PERFORMANCE";
+		case GL_DEBUG_TYPE_MARKER: return "MARKER";
+		case GL_DEBUG_TYPE_OTHER: return "OTHER";
+		}
+	}();
+
+	auto const severity_str = [severity]() {
+		switch (severity) {
+		case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
+		case GL_DEBUG_SEVERITY_LOW: return "LOW";
+		case GL_DEBUG_SEVERITY_MEDIUM: return "MEDIUM";
+		case GL_DEBUG_SEVERITY_HIGH: return "HIGH";
+		}
+	}();
+
+	LOG_WARN("GL: {} type: {} severity: {} message: {}", src_str, type_str, severity_str, message);
 }
 
 Window::Window(std::string_view title, const glm::uvec2& size) : size(size) {
@@ -66,12 +67,13 @@ Window::Window(std::string_view title, const glm::uvec2& size) : size(size) {
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
 	glViewport(0, 0, size.x, size.y);
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 
 	// enabling debug output
 	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(DebugCallback, nullptr);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
+	glDebugMessageCallback(DebugCallback, nullptr);
 }
 
 Window::~Window() {
@@ -80,7 +82,7 @@ Window::~Window() {
 
 bool Window::IsOpen() const {
 	glfwSwapBuffers(_window);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glfwPollEvents();
 
 	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)

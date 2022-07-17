@@ -6,7 +6,7 @@
 
 class Shaders {
 public:
-	Shaders();
+	Shaders(std::string_view vertexPath, std::string_view fragmentPath);
 	~Shaders();
 
 	void Bind(bool state);
@@ -14,14 +14,19 @@ public:
 	int GetAttribLocation(std::string_view name) const;
 
 	// uniform setters
-	void UniformFloat(std::string_view name, float value);
-	void UniformVec2(std::string_view name, const glm::vec2& value);
-	void UniformMat4(std::string_view name, const glm::mat4& value);
+	void SetFloat(std::string_view name, float value);
+	void SetVec2(std::string_view name, const glm::vec2& value);
+	void SetVec3(std::string_view name, const glm::vec3& value);
+	void SetMat4(std::string_view name, const glm::mat4& value);
 private:
-	std::uint32_t CreateShader(const char* source, std::uint32_t type) const;
-	int GetUniformLocation(std::string_view name);
+	struct UniformInfo {
+		int location;
+		int count;
+	};
+
+	std::uint32_t CreateShader(std::string_view path, std::uint32_t type) const;
 
 	std::uint32_t program;
 	bool binded;
-	std::unordered_map<std::string_view, int> cache; // uniform location cache
+	std::unordered_map<std::string_view, UniformInfo> uniforms;
 };

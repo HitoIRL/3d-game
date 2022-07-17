@@ -6,6 +6,7 @@
       <config projectName="3d_game" targetName="UpdateAssimpLibsDebugSymbolsAndDLLs" />
       <config projectName="3d_game" targetName="unit" />
       <config projectName="3d_game" targetName="uninstall" />
+      <config projectName="3d_game" targetName="copy_assets" />
       <config projectName="3d_game" targetName="glfw" />
       <config projectName="3d_game" targetName="glad" />
       <config projectName="3d_game" targetName="spdlog" />
@@ -75,6 +76,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="copy_assets" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="3d_game" TARGET_NAME="copy_assets" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="glad" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="3d_game" TARGET_NAME="glad" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -112,6 +118,7 @@
     </configuration>
     <list>
       <item itemvalue="CMake Application.3d_game" />
+      <item itemvalue="CMake Application.copy_assets" />
       <item itemvalue="CMake Application.UpdateAssimpLibsDebugSymbolsAndDLLs" />
       <item itemvalue="CMake Application.assimp" />
       <item itemvalue="CMake Application.zlibstatic" />
@@ -147,7 +154,12 @@
       <workItem from="1657578106067" duration="2108000" />
       <workItem from="1657618143180" duration="17811000" />
       <workItem from="1657979557538" duration="6026000" />
-      <workItem from="1657995576682" duration="3080000" />
+      <workItem from="1657995576682" duration="7917000" />
+      <workItem from="1658003547793" duration="6693000" />
+      <workItem from="1658011707587" duration="5510000" />
+      <workItem from="1658091337810" duration="596000" />
+      <workItem from="1658094585548" duration="3720000" />
+      <workItem from="1658099032643" duration="1000" />
     </task>
     <servers />
   </component>
