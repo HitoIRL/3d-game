@@ -6,10 +6,12 @@
 
 #include "Core/Window.hpp"
 #include "Core/Shaders.hpp"
+#include "Core/Texture.hpp"
 #include "Debug/Log.hpp"
 
 struct Vertex {
 	glm::vec3 position;
+	glm::vec2 texCoord;
 };
 
 class RawModel {
@@ -36,6 +38,11 @@ public:
 		glVertexArrayAttribFormat(vao, positionAttrib, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, position));
 		glVertexArrayAttribBinding(vao, positionAttrib, 0);
 
+		auto texCoordAttrib = 1;//shaders->GetAttribLocation("position");
+		glEnableVertexArrayAttrib(vao, texCoordAttrib);
+		glVertexArrayAttribFormat(vao, texCoordAttrib, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord));
+		glVertexArrayAttribBinding(vao, texCoordAttrib, 0);
+
 		// attach buffers
 		glVertexArrayVertexBuffer(vao, 0, buffer, 0, sizeof(Vertex));
 		glVertexArrayElementBuffer(vao, buffer);
@@ -61,6 +68,24 @@ private:
 	std::uint32_t indexCount, indicesOffset;
 };
 
+class TexturedModel {
+public:
+	TexturedModel(const RawModel& rawModel, const Texture& texture) : rawModel(rawModel), texture(texture) {
+
+	}
+
+	void Draw() const {
+		glDrawElements(GL_TRIANGLES, rawModel.GetIndexCount(), GL_UNSIGNED_INT, reinterpret_cast<void*>(rawModel.GetIndicesOffset()));
+	}
+
+	void BindTexture() const {
+		texture.Bind(0);
+	}
+private:
+	RawModel rawModel;
+	Texture texture;
+};
+
 int main() {
 	auto startTime = std::chrono::system_clock::now();
 
@@ -72,22 +97,25 @@ int main() {
 	auto window = std::make_unique<Window>("3d game es", glm::vec2(1280, 720));
 	auto shaders = std::make_unique<Shaders>("assets/vertex.glsl", "assets/fragment.glsl");
 
-	auto triangle = RawModel({
-		{{ -0.5f, 0.5f, 0.0f }},
-		{{ -0.5f, -0.5f, 0.0f }},
-		{{ 0.5f, -0.5f, 0.0f }},
-		{{ 0.5f, 0.5f, 0.0f }}
+	RawModel model({
+		{{ -0.5f, 0.5f, 0.0f }, { 0.0f, 0.0f }},
+		{{ -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f }},
+		{{ 0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f  }},
+		{{ 0.5f, 0.5f, 0.0f }, { 1.0f, 0.0f }}
 	}, {
 		0, 1, 3,
 		3, 1, 2
 	});
+	Texture texture("assets/bomba.png");
+	TexturedModel texturedModel(model, texture);
 
 	shaders->Bind(true);
+	model.BindVAO();
+	texturedModel.BindTexture();
+	shaders->SetInt("_texture", 0);
 
-	triangle.BindVAO();
 	while (window->IsOpen()) {
 		auto currentTime = std::chrono::duration<float>(std::chrono::system_clock::now() - startTime).count();
-
-		glDrawElements(GL_TRIANGLES, triangle.GetIndexCount(), GL_UNSIGNED_INT, reinterpret_cast<void*>(triangle.GetIndicesOffset()));
+		texturedModel.Draw();
 	}
 }

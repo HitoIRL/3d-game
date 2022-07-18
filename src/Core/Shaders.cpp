@@ -60,6 +60,10 @@ int Shaders::GetAttribLocation(std::string_view name) const {
 	return glGetAttribLocation(program, name.data());
 }
 
+void Shaders::SetInt(std::string_view name, int value) {
+	glUniform1i(uniforms[name].location, value);
+}
+
 void Shaders::SetFloat(std::string_view name, float value) {
 	glUniform1f(uniforms[name].location, value);
 }

@@ -1,10 +1,11 @@
 #version 460 core
 
 in vec3 position;
+in vec2 texCoord;
 
-out vec3 v_color;
+out vec2 v_texCoord;
 
 void main(){
 	gl_Position = vec4(position, 1.0);
-	v_color = vec3(position.x + 0.5, 1.0, position.y + 0.5);
+	v_texCoord = texCoord;
 }
