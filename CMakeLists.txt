@@ -3,7 +3,7 @@ project(3d_game)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(3d_game src/Main.cpp src/Core/Window.cpp src/Core/Shaders.cpp src/Debug/Log.cpp src/Core/Camera.cpp src/Debug/Tools.hpp src/Core/Texture.cpp src/Core/Texture.hpp)
+add_executable(3d_game src/Main.cpp src/Core/Window.cpp src/Core/Shaders.cpp src/Debug/Log.cpp src/Core/Camera.cpp src/Debug/Tools.hpp src/Core/Texture.cpp src/Core/Texture.hpp src/Core/Entity.cpp src/Core/Entity.hpp src/Core/Model.cpp src/Core/Model.hpp src/Core/Renderer.cpp src/Core/Renderer.hpp src/Core/Input.cpp src/Core/Input.hpp)
 
 # deps
 add_subdirectory(deps/glfw)

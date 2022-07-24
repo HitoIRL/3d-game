@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
     <generated>
       <config projectName="3d_game" targetName="zlibstatic" />
-      <config projectName="3d_game" targetName="UpdateAssimpLibsDebugSymbolsAndDLLs" />
       <config projectName="3d_game" targetName="unit" />
+      <config projectName="3d_game" targetName="UpdateAssimpLibsDebugSymbolsAndDLLs" />
       <config projectName="3d_game" targetName="uninstall" />
       <config projectName="3d_game" targetName="copy_assets" />
       <config projectName="3d_game" targetName="glfw" />
@@ -45,16 +48,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
-    <property name="cf.advertisement.text.has.clang-format" value="true" />
-    <property name="cf.first.check.clang-format" value="false" />
-    <property name="cidr.known.project.marker" value="true" />
-    <property name="cmake.loaded.for.project" value="true" />
-    <property name="settings.editor.selected.configurable" value="fileTemplates" />
-  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;cf.advertisement.text.has.clang-format&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/dev/3d-game&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;fileTemplates&quot;
+  }
+}</component>
   <component name="RunManager" selected="CMake Application.3d_game">
     <configuration name="3d_game" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="3d_game" TARGET_NAME="3d_game" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="3d_game" RUN_TARGET_NAME="3d_game">
       <method v="2">
@@ -62,11 +67,6 @@
       </method>
     </configuration>
     <configuration name="UpdateAssimpLibsDebugSymbolsAndDLLs" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="3d_game" TARGET_NAME="UpdateAssimpLibsDebugSymbolsAndDLLs" CONFIG_NAME="Debug">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -160,6 +160,19 @@
       <workItem from="1658091337810" duration="596000" />
       <workItem from="1658094585548" duration="3720000" />
       <workItem from="1658099032643" duration="3093000" />
+      <workItem from="1658240870898" duration="54000" />
+      <workItem from="1658240930994" duration="62000" />
+      <workItem from="1658240999336" duration="157000" />
+      <workItem from="1658241515275" duration="201000" />
+      <workItem from="1658242227256" duration="351000" />
+      <workItem from="1658522213873" duration="266000" />
+      <workItem from="1658535095284" duration="5000" />
+      <workItem from="1658604623606" duration="119000" />
+      <workItem from="1658604749466" duration="4070000" />
+      <workItem from="1658613393391" duration="2053000" />
+      <workItem from="1658617555960" duration="6682000" />
+      <workItem from="1658660307449" duration="2435000" />
+      <workItem from="1658663058532" duration="7477000" />
     </task>
     <servers />
   </component>

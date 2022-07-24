@@ -5,10 +5,25 @@
 
 #include "../Debug/Log.hpp"
 
+keyCb keyCallback;
+cursorPosCb cursorPosCallback;
+
+void KeyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) {
+	if (key == GLFW_KEY_ESCAPE)
+		glfwSetWindowShouldClose(window, 1);
+
+	if (keyCallback)
+		keyCallback(key, action);
+}
+
+void CursorPositionCallback(GLFWwindow* window, double x, double y) {
+	if (cursorPosCallback)
+		cursorPosCallback(x, y);
+}
+
 void __stdcall DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
 	auto const src_str = [source]() {
-		switch (source)
-		{
+		switch (source) {
 		case GL_DEBUG_SOURCE_API: return "API";
 		case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return "WINDOW SYSTEM";
 		case GL_DEBUG_SOURCE_SHADER_COMPILER: return "SHADER COMPILER";
@@ -19,8 +34,7 @@ void __stdcall DebugCallback(GLenum source, GLenum type, GLuint id, GLenum sever
 	}();
 
 	auto const type_str = [type]() {
-		switch (type)
-		{
+		switch (type) {
 		case GL_DEBUG_TYPE_ERROR: return "ERROR";
 		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEPRECATED_BEHAVIOR";
 		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return "UNDEFINED_BEHAVIOR";
@@ -62,12 +76,15 @@ Window::Window(std::string_view title, const glm::uvec2& size) : size(size) {
 	}
 
 	glfwMakeContextCurrent(_window);
-	glfwSwapInterval(1); // toggles vsync
+	glfwSwapInterval(1);
+	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // lock cursor
+	glfwSetKeyCallback(_window, KeyCallback);
+	glfwSetCursorPosCallback(_window, CursorPositionCallback);
 
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
 	glViewport(0, 0, size.x, size.y);
-	//glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
 
 	// enabling debug output
 	glEnable(GL_DEBUG_OUTPUT);
@@ -82,15 +99,16 @@ Window::~Window() {
 
 bool Window::IsOpen() const {
 	glfwSwapBuffers(_window);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glfwPollEvents();
-
-	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(_window, 1);
 
 	return !glfwWindowShouldClose(_window);
 }
 
-const glm::uvec2& Window::GetSize() const {
-	return size;
+void Window::SetKeyCallback(const keyCb& callback) {
+	keyCallback = callback;
+}
+
+void Window::SetCursorPosCallback(const cursorPosCb& callback) {
+	cursorPosCallback = callback;
 }
