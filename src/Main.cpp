@@ -66,10 +66,10 @@ int main() {
 	Entity entity(texturedModel, { 0, 0, -3 }, { 0, 0, 0 }, 1);
 	Renderer renderer(window->GetSize(), shaders);
 
+	shaders->Bind(true);
 	while (window->IsOpen()) {
 		Input::Update();
 		camera->Update();
-		shaders->SetMat4("_view", camera->GetViewMatrix());
-		renderer.Render(entity);
+		renderer.Render(entity, camera->GetViewMatrix());
 	}
 }

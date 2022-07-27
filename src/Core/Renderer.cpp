@@ -15,17 +15,16 @@ glm::mat4 CreateTransformationMatrix(const glm::vec3& translation, const glm::ve
 	return temp;
 }
 
-Renderer::Renderer(const glm::uvec2& windowSize, const std::shared_ptr<Shaders>& shaders) : shaders(shaders), projection(0) {
-	projection = glm::perspective(FOV, (float)windowSize.x / (float)windowSize.y, NEAR_PLANE, FAR_PLANE);
-	shaders->Bind(true);
-	shaders->SetMat4("_projection", projection);
+Renderer::Renderer(const glm::uvec2& windowSize, const std::shared_ptr<Shaders>& shaders) : shaders(shaders), projectionMatrix(glm::perspective(FOV, (float)windowSize.x / (float)windowSize.y, NEAR_PLANE, FAR_PLANE)) {
+
 }
 
-void Renderer::Render(const Entity& entity) const {
+void Renderer::Render(const Entity& entity, const glm::mat4& viewMatrix) const {
 	auto& model = entity.GetModel();
 	auto& rawModel = model.GetRawModel();
 	auto transformation = CreateTransformationMatrix(entity.GetPosition(), entity.GetRotation(), entity.GetScale());
-	shaders->SetMat4("_transformation", transformation);
+	auto mvp = projectionMatrix * viewMatrix * transformation;
+	shaders->SetMat4("mvp", mvp);
 	rawModel.BindVAO(true);
 	model.BindTexture();
 	shaders->SetInt("_texture", 0);
