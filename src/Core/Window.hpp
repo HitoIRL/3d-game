@@ -1,14 +1,9 @@
 #pragma once
 
-#include <functional>
-
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 struct GLFWwindow;
-
-using keyCb = std::function<void(int, int)>;
-using cursorPosCb = std::function<void(float, float)>;
 
 class Window {
 public:
@@ -17,9 +12,8 @@ public:
 
 	bool IsOpen() const;
 
-	void SetKeyCallback(const keyCb& callback);
-	void SetCursorPosCallback(const cursorPosCb& callback);
 	const glm::uvec2& GetSize() const { return size; }
+	GLFWwindow* GetNative() const { return _window; }
 private:
 	GLFWwindow* _window;
 	glm::uvec2 size;

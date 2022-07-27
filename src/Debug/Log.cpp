@@ -10,4 +10,5 @@ void Log::Init() {
 	logger = std::make_shared<spdlog::logger>("core", sink);
 	spdlog::register_logger(logger);
 	logger->set_level(spdlog::level::info);
+	logger->info("Logger initialized");
 }

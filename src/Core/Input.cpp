@@ -2,10 +2,26 @@
 
 #include <GLFW/glfw3.h>
 
-#include "../Debug/Log.hpp"
-
 bool keys[GLFW_KEY_LAST];
 float lastFrame, deltaTime;
+std::vector<Input::CursorPanCallback> cursorPanCallbacks;
+
+void KeyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) {
+	if (key == GLFW_KEY_ESCAPE)
+		glfwSetWindowShouldClose(window, 1);
+	keys[key] = action;
+}
+
+void CursorPositionCallback(GLFWwindow* window, double x, double y) {
+	glm::vec2 position = { x, y };
+	for (auto& callback : cursorPanCallbacks)
+		callback(position);
+}
+
+void Input::Init(GLFWwindow* native) {
+	glfwSetKeyCallback(native, KeyCallback);
+	glfwSetCursorPosCallback(native, CursorPositionCallback);
+}
 
 void Input::Update() {
 	auto currentFrame = static_cast<float>(glfwGetTime());
@@ -13,20 +29,9 @@ void Input::Update() {
 	lastFrame = currentFrame;
 }
 
-void Input::KeyCallback(int key, int action) {
-	keys[key] = action;
+void Input::AddCursorPanCallback(const CursorPanCallback& callback) {
+	cursorPanCallbacks.emplace_back(callback);
 }
-
-//void Input::CursorPositionCallback(float x, float y) {
-//	float xOffset = x - lastX;
-//	float yOffset = lastY - y;
-//	lastX = x;
-//	lastY = y;
-//
-//	const float sensitivity = 0.1f;
-//	xOffset *= sensitivity;
-//	yOffset *= sensitivity;
-//}
 
 bool Input::IsKeyHeld(Key key) {
 	return keys[static_cast<int>(key)] != GLFW_RELEASE;

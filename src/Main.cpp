@@ -6,20 +6,16 @@
 #include "Core/Input.hpp"
 #include "Core/Camera.hpp"
 
-using namespace std::placeholders;
-
 int main() {
 	Log::Init();
-	LOG_INFO("Hello!");
 	auto cwd = std::filesystem::current_path();
 	LOG_INFO("Current working directory: {}", cwd.string());
 
 	auto window = std::make_unique<Window>("3d game es", glm::vec2(1280, 720));
+	Input::Init(window->GetNative());
+
 	auto shaders = std::make_shared<Shaders>("assets/vertex.glsl", "assets/fragment.glsl");
 	auto camera = std::make_shared<Camera>();
-
-	window->SetKeyCallback(Input::KeyCallback);
-	window->SetCursorPosCallback(std::bind(&Camera::CursorPositionCallback, camera, _1, _2));
 
 	RawModel model({
 			{{-0.5f,0.5f,-0.5f}, {0,0}},

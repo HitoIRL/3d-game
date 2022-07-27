@@ -3,36 +3,38 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Input.hpp"
-#include "../Debug/Log.hpp"
+
+constexpr float CAMERA_SPEED = 2.5f;
+constexpr glm::vec3 UP_VECTOR = { 0, 1, 0 };
+
+Camera::Camera() : front(0, 0, -1), right(1, 0, 0), position(0), pitch(0), yaw(-90) {
+	Input::AddCursorPanCallback(std::bind(&Camera::CursorPanCallback, this, std::placeholders::_1));
+}
 
 void Camera::Update() {
-	// input
-	auto cameraSpeed = SPEED * Input::GetDeltaTime();
-	if (Input::IsKeyHeld(Key::W)) {
-		position += front * cameraSpeed;
-	}
-	if (Input::IsKeyHeld(Key::S)) {
-		position -= front * cameraSpeed;
-	}
-	if (Input::IsKeyHeld(Key::A)) {
-		position -= glm::normalize(glm::cross(front, UP)) * cameraSpeed;
-	}
-	if (Input::IsKeyHeld(Key::D)) {
-		position += glm::normalize(glm::cross(front, UP)) * cameraSpeed;
-	}
+	auto velocity = CAMERA_SPEED * Input::GetDeltaTime();
+	if (Input::IsKeyHeld(Key::W))
+		position += front * velocity;
+	if (Input::IsKeyHeld(Key::S))
+		position -= front * velocity;
+	if (Input::IsKeyHeld(Key::A))
+		position -= right * velocity;
+	if (Input::IsKeyHeld(Key::D))
+		position += right * velocity;
 
 	viewMatrix = glm::lookAt(position, position + front, { 0, 1, 0 });
 }
 
-void Camera::CursorPositionCallback(float x, float y) {
+void Camera::CursorPanCallback(const glm::vec2& pos) {
+	static bool cursorInit = false;
 	if (!cursorInit) {
 		cursorInit = true;
-		lastPosition = { x, y };
+		lastPosition = pos;
 	}
 
-	float xOffset = x - lastPosition.x;
-	float yOffset = lastPosition.y - y;
-	lastPosition = { x, y };
+	float xOffset = pos.x - lastPosition.x;
+	float yOffset = lastPosition.y - pos.y;
+	lastPosition = pos;
 
 	const float sensitivity = 0.1f;
 	xOffset *= sensitivity;
@@ -46,9 +48,11 @@ void Camera::CursorPositionCallback(float x, float y) {
 	if (pitch < -89.0f)
 		pitch = -89.0f;
 
-	glm::vec3 direction;
-	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	glm::vec3 direction = {
+			cos(glm::radians(yaw)) * cos(glm::radians(pitch)),
+			sin(glm::radians(pitch)),
+			sin(glm::radians(yaw)) * cos(glm::radians(pitch))
+	};
 	front = glm::normalize(direction);
+	right = glm::normalize(glm::cross(front, UP_VECTOR));
 }

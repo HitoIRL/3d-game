@@ -5,22 +5,6 @@
 
 #include "../Debug/Log.hpp"
 
-keyCb keyCallback;
-cursorPosCb cursorPosCallback;
-
-void KeyCallback(GLFWwindow* window, int key, int scanCode, int action, int mods) {
-	if (key == GLFW_KEY_ESCAPE)
-		glfwSetWindowShouldClose(window, 1);
-
-	if (keyCallback)
-		keyCallback(key, action);
-}
-
-void CursorPositionCallback(GLFWwindow* window, double x, double y) {
-	if (cursorPosCallback)
-		cursorPosCallback(x, y);
-}
-
 void __stdcall DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
 	auto const src_str = [source]() {
 		switch (source) {
@@ -66,6 +50,7 @@ Window::Window(std::string_view title, const glm::uvec2& size) : size(size) {
 	// we want latest available version of gl
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 	_window = glfwCreateWindow(size.x, size.y, title.data(), nullptr, nullptr);
@@ -78,8 +63,6 @@ Window::Window(std::string_view title, const glm::uvec2& size) : size(size) {
 	glfwMakeContextCurrent(_window);
 	glfwSwapInterval(1);
 	glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // lock cursor
-	glfwSetKeyCallback(_window, KeyCallback);
-	glfwSetCursorPosCallback(_window, CursorPositionCallback);
 
 	gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress));
 
@@ -103,12 +86,4 @@ bool Window::IsOpen() const {
 	glfwPollEvents();
 
 	return !glfwWindowShouldClose(_window);
-}
-
-void Window::SetKeyCallback(const keyCb& callback) {
-	keyCallback = callback;
-}
-
-void Window::SetCursorPosCallback(const cursorPosCb& callback) {
-	cursorPosCallback = callback;
 }

@@ -5,20 +5,16 @@
 
 class Camera {
 public:
+	Camera();
+
 	void Update();
 
-	void CursorPositionCallback(float x, float y);
-
-	const glm::vec3& GetPosition() const { return position; }
-	float GetPitch() const { return pitch; }
-	float GetYaw() const { return yaw; }
 	const glm::mat4& GetViewMatrix() const { return viewMatrix; }
 private:
-	static constexpr float SPEED = 2.5f;
-	static constexpr glm::vec3 UP = { 0, 1, 0 };
-	glm::vec3 front, position, target;
-	float pitch, yaw = -90.0f;
+	void CursorPanCallback(const glm::vec2& pos);
+
+	glm::vec3 front, right, position;
+	float pitch, yaw;
 	glm::mat4 viewMatrix;
-	bool cursorInit;
 	glm::vec2 lastPosition; // cursor
 };
