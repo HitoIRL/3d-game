@@ -15,6 +15,7 @@ public:
 
 	// uniform setters
 	void SetInt(std::string_view name, int value) const;
+	void SetIntArray(std::string_view name, int* value) const;
 	void SetFloat(std::string_view name, float value) const;
 	void SetVec2(std::string_view name, const glm::vec2& value) const;
 	void SetVec3(std::string_view name, const glm::vec3& value) const;

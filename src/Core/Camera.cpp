@@ -4,7 +4,7 @@
 
 #include "Input.hpp"
 
-constexpr float CAMERA_SPEED = 2.5f;
+constexpr float CAMERA_SPEED = 5.0f;
 constexpr glm::vec3 UP_VECTOR = { 0, 1, 0 };
 
 Camera::Camera() : front(0, 0, -1), right(1, 0, 0), position(0), pitch(0), yaw(-90) {

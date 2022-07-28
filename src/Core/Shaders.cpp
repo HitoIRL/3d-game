@@ -59,6 +59,10 @@ void Shaders::SetInt(std::string_view name, int value) const {
 	glUniform1i(GetLocation(name), value);
 }
 
+void Shaders::SetIntArray(std::string_view name, int* value) const {
+	glUniform1iv(GetLocation(name), 16, value);
+}
+
 void Shaders::SetFloat(std::string_view name, float value) const {
 	glUniform1f(GetLocation(name), value);
 }

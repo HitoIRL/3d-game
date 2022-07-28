@@ -27,12 +27,12 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<std::uint32_t>
 	glCreateVertexArrays(1, &vao);
 
 	// vertex buffer layout
-	auto positionAttrib = 0;//shaders->GetAttribLocation("position");
+	auto positionAttrib = 0u;//shaders->GetAttribLocation("position");
 	glEnableVertexArrayAttrib(vao, positionAttrib);
 	glVertexArrayAttribFormat(vao, positionAttrib, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, position));
 	glVertexArrayAttribBinding(vao, positionAttrib, 0);
 
-	auto texCoordAttrib = 1;//shaders->GetAttribLocation("texCoord");
+	auto texCoordAttrib = 1u;//shaders->GetAttribLocation("texCoord");
 	glEnableVertexArrayAttrib(vao, texCoordAttrib);
 	glVertexArrayAttribFormat(vao, texCoordAttrib, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord));
 	glVertexArrayAttribBinding(vao, texCoordAttrib, 0);
@@ -48,10 +48,8 @@ Mesh::~Mesh() {
 }
 
 void Mesh::Draw() const {
-	auto index = 0u;
-	for (auto& texture : textures) {
-		texture->Bind(index++);
-	}
+	for (auto i = 0u; i < textures.size(); i++)
+		textures[i]->Bind(i);
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, reinterpret_cast<void*>(indicesOffset));
@@ -60,7 +58,7 @@ void Mesh::Draw() const {
 
 Model::Model(std::string_view path) : directory(path.substr(0, path.find_last_of('/'))) {
 	Assimp::Importer importer;
-	auto scene = importer.ReadFile(path.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
+	auto scene = importer.ReadFile(path.data(), aiProcess_Triangulate);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		LOG_ERROR("Couldn't load assimp mesh '{}'", path);
@@ -84,10 +82,12 @@ void Model::CreateMesh(const aiMesh* mesh, const aiScene* scene) {
 	for (auto i = 0u; i < mesh->mNumVertices; i++) {
 		const auto position = mesh->mVertices[i];
 		const auto texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : aiVector3D(0.0, 0.0, 0.0f);
-		Vertex vertex {
+
+		Vertex vertex{
 				{ position.x, position.y, position.z },
-				{ texCoord.x, texCoord.y }
+				{ texCoord.x, texCoord.y },
 		};
+
 		vertices.emplace_back(vertex);
 	}
 
