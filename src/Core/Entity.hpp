@@ -2,7 +2,7 @@
 
 #include <glm/mat4x2.hpp>
 
-#include "Mesh.hpp"
+#include "Model.hpp"
 
 class Entity {
 public:
