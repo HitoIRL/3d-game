@@ -112,5 +112,5 @@ int Shaders::GetLocation(std::string_view name) const {
 		return uniforms.at(name.data());
 
 	LOG_ERROR("Uniform '{}' not found", name);
-	std::exit(EXIT_FAILURE);
+	return -1;
 }

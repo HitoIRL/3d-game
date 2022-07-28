@@ -7,7 +7,7 @@
 
 #include "../Debug/Log.hpp"
 
-Texture::Texture(std::string_view path) {
+Texture::Texture(std::string_view path, TextureType type) : type(type), path(path) {
 	glm::ivec2 size;
 	int channels;
 
