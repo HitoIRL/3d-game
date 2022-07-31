@@ -15,6 +15,8 @@ const glm::vec3 PointLightPositions[] = {
 		glm::vec3( 0.0f,  0.0f, -3.0f)
 };
 
+// todo: cube entity
+
 int main() {
 	Log::Init();
 	auto cwd = std::filesystem::current_path();
@@ -28,11 +30,11 @@ int main() {
 
 	auto camera = std::make_shared<Camera>();
 
-	auto model = std::make_shared<Model>("assets/backpack/backpack.obj");
+	auto model = std::make_shared<Model>("assets/stall/stall.obj");
 	std::vector<Entity> entities;
 	for (auto i = 0u; i < 6; i++)
-		entities.emplace_back(model, glm::vec3(i * 5, 0, -5), glm::vec3(0), 1.0f);
-		//Entity entity(model, { 0, 0, -5 }, { 0, 0, 0 }, 1.0f);
+		entities.emplace_back(model, glm::vec3(i * 10, 0, -5), glm::vec3(0), 1.0f);
+	Texture texture("assets/stall/stallTexture.png");
 
 	Renderer renderer(window->GetSize(), cubeShaders);
 
@@ -67,6 +69,7 @@ int main() {
 	cubeShaders->SetFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 	//cubeShaders->Bind(false);
 
+	texture.Bind(0);
 	while (window->IsOpen()) {
 		Input::Update();
 		camera->Update();

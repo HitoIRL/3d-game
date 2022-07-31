@@ -12,7 +12,7 @@ public:
 	void Add(const Entity& entity);
 	void Render(const glm::mat4& viewMatrix);
 
-	const glm::mat4& GetProjectionMatrix() const { return projectionMatrix; }
+	//const glm::mat4& GetProjectionMatrix() const { return projectionMatrix; }
 private:
 	constexpr static float FOV = 70.0f, NEAR_PLANE = 0.1f, FAR_PLANE = 100.0f;
 	glm::mat4 projectionMatrix;

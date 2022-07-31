@@ -14,27 +14,20 @@ struct Vertex {
 	glm::vec2 texCoord;
 };
 
-class Mesh {
-public:
-	Mesh(const std::vector<Vertex>& vertices, const std::vector<std::uint32_t>& indices, const std::vector<std::shared_ptr<Texture>>& textures);
-	~Mesh();
-
-	void Draw() const;
-private:
-	std::uint32_t vao, buffer, indexCount, indicesOffset;
-	std::vector<std::shared_ptr<Texture>> textures;
-};
-
 class Model {
 public:
 	Model(std::string_view path);
+	~Model();
 
 	void Draw() const;
+	void BindVAO(bool state) const;
 private:
 	void CreateMesh(const aiMesh* mesh, const aiScene* scene);
 	std::vector<std::shared_ptr<Texture>> FetchTextures(const aiMaterial* material, aiTextureType type);
 
+	std::uint32_t vao, buffer, indicesOffset;
 	std::string directory;
-	std::vector<Mesh> meshes;
-	std::vector<std::shared_ptr<Texture>> loadedTextures;
+	std::vector<std::shared_ptr<Texture>> textures;
+	std::vector<Vertex> vertices; // not splitting into meshes limits our buffer size to ~32MB*
+	std::vector<std::uint32_t> indices;
 };
