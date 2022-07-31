@@ -2,7 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Entity::Entity(const Model& model, const glm::vec3& position, const glm::vec3& rotation, float scale) : model(model), position(position), rotation(rotation), scale(scale) {
+Entity::Entity(const std::shared_ptr<Model>& model, const glm::vec3& position, const glm::vec3& rotation, float scale) : model(model), position(position), rotation(rotation), scale(scale) {
 
 }
 

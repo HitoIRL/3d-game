@@ -9,6 +9,8 @@ enum class Key {
 	S = 83,
 	A = 65,
 	D = 68,
+
+	Shift = 340, // left shift
 };
 
 struct GLFWwindow;

@@ -4,7 +4,7 @@
 
 #include "Input.hpp"
 
-constexpr float CAMERA_SPEED = 5.0f;
+constexpr float CAMERA_SPEED = 5.0f, FAST_CAMERA_SPEED = 30.0f;
 constexpr glm::vec3 UP_VECTOR = { 0, 1, 0 };
 
 Camera::Camera() : front(0, 0, -1), right(1, 0, 0), position(0), pitch(0), yaw(-90) {
@@ -12,7 +12,7 @@ Camera::Camera() : front(0, 0, -1), right(1, 0, 0), position(0), pitch(0), yaw(-
 }
 
 void Camera::Update() {
-	auto velocity = CAMERA_SPEED * Input::GetDeltaTime();
+	auto velocity = (Input::IsKeyHeld(Key::Shift) ? FAST_CAMERA_SPEED : CAMERA_SPEED) * Input::GetDeltaTime();
 	if (Input::IsKeyHeld(Key::W))
 		position += front * velocity;
 	if (Input::IsKeyHeld(Key::S))

@@ -9,9 +9,23 @@ Renderer::Renderer(const glm::uvec2& windowSize, const std::shared_ptr<Shaders>&
 
 }
 
-void Renderer::Render(const Entity& entity, const glm::mat4& viewMatrix) const {
+void Renderer::Add(const Entity& entity) {
 	auto& model = entity.GetModel();
-	auto mvp = projectionMatrix * viewMatrix * entity.GetModelMatrix();
-	shaders->SetMat4("mvp", mvp);
-	model.Draw();
+	models[model].emplace_back(entity);
+}
+
+void Renderer::Render(const glm::mat4& viewMatrix) {
+	shaders->SetMat4("vp", projectionMatrix * viewMatrix);
+
+	for (auto& model : models) {
+		auto& [key, value] = model;
+		//key->BindVAO(true);
+		for (auto& entity : value) {
+			shaders->SetMat4("model", entity.GetModelMatrix());
+			key->Draw();
+		}
+		//key->BindVAO(false);
+	}
+
+	models.clear();
 }
