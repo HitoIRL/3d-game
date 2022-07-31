@@ -6,22 +6,12 @@
 #include <glm/vec2.hpp>
 #include <assimp/scene.h>
 
+#include "Texture.hpp"
+
 struct Vertex {
 	glm::vec3 position;
+	glm::vec3 normal;
 	glm::vec2 texCoord;
-};
-
-class Texture {
-public:
-	Texture(std::string_view path);
-	~Texture();
-
-	void Bind(std::uint16_t slot) const;
-
-	const std::string& GetPath() const { return path; }
-private:
-	std::uint32_t id;
-	std::string path;
 };
 
 class Mesh {
@@ -42,6 +32,7 @@ public:
 	void Draw() const;
 private:
 	void CreateMesh(const aiMesh* mesh, const aiScene* scene);
+	std::vector<std::shared_ptr<Texture>> FetchTextures(const aiMaterial* material, aiTextureType type);
 
 	std::string directory;
 	std::vector<Mesh> meshes;

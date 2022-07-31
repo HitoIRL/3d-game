@@ -3,8 +3,6 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <glad/glad.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 
 #include "../Debug/Log.hpp"
 
@@ -13,7 +11,7 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<std::uint32_t>
 
 	// vbo & ibo
 	const auto verticesSize = vertices.size() * sizeof(Vertex);
-	const auto indicesSize = indices.size() * sizeof(std::uint32_t);
+	const auto indicesSize = indexCount * sizeof(std::uint32_t);
 
 	indicesOffset = verticesSize;
 
@@ -32,7 +30,12 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<std::uint32_t>
 	glVertexArrayAttribFormat(vao, positionAttrib, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, position));
 	glVertexArrayAttribBinding(vao, positionAttrib, 0);
 
-	auto texCoordAttrib = 1u;//shaders->GetAttribLocation("texCoord");
+	auto normalAttrib = 1u;//shaders->GetAttribLocation("normalAttrib");
+	glEnableVertexArrayAttrib(vao, normalAttrib);
+	glVertexArrayAttribFormat(vao, normalAttrib, 3, GL_FLOAT, GL_FALSE, offsetof(Vertex, normal));
+	glVertexArrayAttribBinding(vao, normalAttrib, 0);
+
+	auto texCoordAttrib = 2u;//shaders->GetAttribLocation("texCoord");
 	glEnableVertexArrayAttrib(vao, texCoordAttrib);
 	glVertexArrayAttribFormat(vao, texCoordAttrib, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoord));
 	glVertexArrayAttribBinding(vao, texCoordAttrib, 0);
@@ -80,11 +83,14 @@ void Model::Draw() const {
 void Model::CreateMesh(const aiMesh* mesh, const aiScene* scene) {
 	std::vector<Vertex> vertices;
 	for (auto i = 0u; i < mesh->mNumVertices; i++) {
+		aiVector3D zero(0);
 		const auto position = mesh->mVertices[i];
-		const auto texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : aiVector3D(0.0, 0.0, 0.0f);
+		const auto normal = mesh->HasNormals() ? mesh->mNormals[i] : zero;
+		const auto texCoord = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : zero;
 
 		Vertex vertex{
 				{ position.x, position.y, position.z },
+				{ normal.x, normal.y, normal.z },
 				{ texCoord.x, texCoord.y },
 		};
 
@@ -101,59 +107,38 @@ void Model::CreateMesh(const aiMesh* mesh, const aiScene* scene) {
 	std::vector<std::shared_ptr<Texture>> textures;
 	if (mesh->mMaterialIndex >= 0) {
 		const auto material = scene->mMaterials[mesh->mMaterialIndex];
-		for (auto i = 0u; i < material->GetTextureCount(aiTextureType_DIFFUSE); i++) {
-			aiString str;
-			material->GetTexture(aiTextureType_DIFFUSE, i, &str);
-			auto path = directory + "/" + str.C_Str();
-
-			bool skip = false;
-			for (auto& loadedTexture : loadedTextures) {
-				if (loadedTexture->GetPath() == path) {
-					textures.emplace_back(loadedTexture);
-					skip = true;
-					break;
-				}
-			}
-
-			if (!skip) {
-				auto texture = std::make_shared<Texture>(path);
-				textures.emplace_back(texture);
-				loadedTextures.emplace_back(texture);
-			}
-		}
-	}
+		auto diffuseMaps = FetchTextures(material,  aiTextureType_DIFFUSE);
+		textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+		auto specularMaps = FetchTextures(material,  aiTextureType_SPECULAR);
+		textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
+	};
 
 	meshes.emplace_back(vertices, indices, textures);
 }
 
-Texture::Texture(std::string_view path) : path(path) {
-	glm::ivec2 size;
-	int channels;
+std::vector<std::shared_ptr<Texture>> Model::FetchTextures(const aiMaterial* material, aiTextureType type) {
+	std::vector<std::shared_ptr<Texture>> textures;
 
-	LOG_INFO("Creating new texture from '{}'", path);
+	for (auto i = 0u; i < material->GetTextureCount(type); i++) {
+		aiString str;
+		material->GetTexture(type, i, &str);
+		auto path = directory + "/" + str.C_Str();
 
-	if (const auto data = stbi_load(path.data(), &size.x, &size.y, &channels, 0)) {
-		glCreateTextures(GL_TEXTURE_2D, 1, &id);
+		bool skip = false;
+		for (auto& loadedTexture : loadedTextures) {
+			if (loadedTexture->GetPath() == path) {
+				textures.emplace_back(loadedTexture);
+				skip = true;
+				break;
+			}
+		}
 
-		glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(id, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(id, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-		glTextureStorage2D(id, 1, channels == 4 ? GL_RGBA8 : GL_RGB8, size.x, size.y);
-		glTextureSubImage2D(id, 0, 0, 0, size.x, size.y, channels == 4 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
-
-		stbi_image_free(data);
-	} else {
-		LOG_ERROR("Failed to load texture '{}' | {}", path, stbi_failure_reason());
-		std::exit(EXIT_FAILURE);
+		if (!skip) {
+			auto texture = std::make_shared<Texture>(path);
+			textures.emplace_back(texture);
+			loadedTextures.emplace_back(texture);
+		}
 	}
-}
 
-Texture::~Texture() {
-	glDeleteTextures(1, &id);
-}
-
-void Texture::Bind(std::uint16_t slot) const {
-	glBindTextureUnit(slot, id);
+	return textures;
 }

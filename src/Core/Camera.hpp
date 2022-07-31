@@ -10,6 +10,8 @@ public:
 	void Update();
 
 	const glm::mat4& GetViewMatrix() const { return viewMatrix; }
+	const glm::vec3& GetPosition() const { return position; }
+	const glm::vec3& GetFront() const { return front; } // aka direction
 private:
 	void CursorPanCallback(const glm::vec2& pos);
 

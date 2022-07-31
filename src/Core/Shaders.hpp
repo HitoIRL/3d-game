@@ -21,10 +21,15 @@ public:
 	void SetVec3(std::string_view name, const glm::vec3& value) const;
 	void SetMat4(std::string_view name, const glm::mat4& value) const;
 private:
-	int GetLocation(std::string_view name) const;
+	struct UniformInfo {
+		int location;
+		int count;
+	};
+
+	const UniformInfo& GetUniformInfo(std::string_view name) const;
 	std::uint32_t CreateShader(std::string_view path, std::uint32_t type) const;
 
 	std::uint32_t program;
 	bool binded;
-	std::unordered_map<std::string, int> uniforms;
+	std::unordered_map<std::string, UniformInfo> uniforms;
 };

@@ -34,7 +34,10 @@ Shaders::Shaders(std::string_view vertexPath, std::string_view fragmentPath) : p
 
 		for (auto i = 0u; i < uniformCount; ++i) {
 			glGetActiveUniform(program, i, maxNameLength, &length, &count, &type, uniformName.get());
-			uniforms.emplace(uniformName.get(), glGetUniformLocation(program, uniformName.get()));
+			UniformInfo info{};
+			info.location = glGetUniformLocation(program, uniformName.get());
+			info.count = count;
+			uniforms.emplace(uniformName.get(), info);
 		}
 	}
 }
@@ -56,27 +59,28 @@ int Shaders::GetAttribLocation(std::string_view name) const {
 }
 
 void Shaders::SetInt(std::string_view name, int value) const {
-	glUniform1i(GetLocation(name), value);
+	glUniform1i(GetUniformInfo(name).location, value);
 }
 
 void Shaders::SetIntArray(std::string_view name, int* value) const {
-	glUniform1iv(GetLocation(name), 16, value);
+	auto& info = GetUniformInfo(name);
+	glUniform1iv(info.location, info.count, value);
 }
 
 void Shaders::SetFloat(std::string_view name, float value) const {
-	glUniform1f(GetLocation(name), value);
+	glUniform1f(GetUniformInfo(name).location, value);
 }
 
 void Shaders::SetVec2(std::string_view name, const glm::vec2& value) const {
-	glUniform2fv(GetLocation(name), 1, glm::value_ptr(value));
+	glUniform2fv(GetUniformInfo(name).location, 1, glm::value_ptr(value));
 }
 
 void Shaders::SetVec3(std::string_view name, const glm::vec3& value) const {
-	glUniform3fv(GetLocation(name), 1, glm::value_ptr(value));
+	glUniform3fv(GetUniformInfo(name).location, 1, glm::value_ptr(value));
 }
 
 void Shaders::SetMat4(std::string_view name, const glm::mat4& value) const {
-	glUniformMatrix4fv(GetLocation(name), 1, GL_FALSE, glm::value_ptr(value));
+	glUniformMatrix4fv(GetUniformInfo(name).location, 1, GL_FALSE, glm::value_ptr(value));
 }
 
 std::uint32_t Shaders::CreateShader(std::string_view path, std::uint32_t type) const {
@@ -103,7 +107,7 @@ std::uint32_t Shaders::CreateShader(std::string_view path, std::uint32_t type) c
 		std::vector<char> log(maxLength);
 		glGetShaderInfoLog(shader, maxLength, &maxLength, &log[0]);
 		glDeleteShader(shader);
-		LOG_ERROR("Failed to compile shader:\n{}", log);
+		LOG_ERROR("Failed to compile '{}' shader:\n{}", path, log);
 		std::exit(EXIT_FAILURE);
 	}
 
@@ -111,10 +115,10 @@ std::uint32_t Shaders::CreateShader(std::string_view path, std::uint32_t type) c
 	return shader;
 }
 
-int Shaders::GetLocation(std::string_view name) const {
+const Shaders::UniformInfo& Shaders::GetUniformInfo(std::string_view name) const {
 	if (uniforms.contains(name.data()))
 		return uniforms.at(name.data());
 
 	LOG_ERROR("Uniform '{}' not found", name);
-	return -1;
+	return UniformInfo{};
 }

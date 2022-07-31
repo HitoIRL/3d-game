@@ -24,7 +24,7 @@ void Input::Init(GLFWwindow* native) {
 }
 
 void Input::Update() {
-	auto currentFrame = static_cast<float>(glfwGetTime());
+	auto currentFrame = glfwGetTime();
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 }
@@ -39,4 +39,8 @@ bool Input::IsKeyHeld(Key key) {
 
 float Input::GetDeltaTime() {
 	return deltaTime;
+}
+
+float Input::GetElapsedTime() {
+	return glfwGetTime();
 }

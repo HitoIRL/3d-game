@@ -23,4 +23,5 @@ namespace Input {
 
 	bool IsKeyHeld(Key key);
 	float GetDeltaTime();
+	float GetElapsedTime();
 }

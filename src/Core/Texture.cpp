@@ -7,10 +7,11 @@
 
 #include "../Debug/Log.hpp"
 
-Texture::Texture(std::string_view path, TextureType type) : type(type), path(path) {
+Texture::Texture(std::string_view path) : path(path) {
 	glm::ivec2 size;
 	int channels;
 
+	LOG_INFO("Creating new texture from '{}'", path);
 	if (const auto data = stbi_load(path.data(), &size.x, &size.y, &channels, 0)) {
 		glCreateTextures(GL_TEXTURE_2D, 1, &id);
 
@@ -30,6 +31,7 @@ Texture::Texture(std::string_view path, TextureType type) : type(type), path(pat
 }
 
 Texture::~Texture() {
+	LOG_INFO("Deleting texture");
 	glDeleteTextures(1, &id);
 }
 
