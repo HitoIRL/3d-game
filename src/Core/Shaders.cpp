@@ -13,6 +13,19 @@ Shaders::Shaders(std::string_view vertexPath, std::string_view fragmentPath) : p
 
 	glLinkProgram(program);
 
+	// check if linked correctly
+	int status;
+	glGetProgramiv(program, GL_LINK_STATUS, &status);
+	if (status == GL_FALSE) {
+		GLint logLen;
+		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLen);
+		std::vector<char>log(logLen);
+		int written;
+		glGetProgramInfoLog(program, logLen, &written, log.data());
+		LOG_ERROR("Failed to link program:\n{}", log.data());
+		std::exit(EXIT_FAILURE);
+	}
+
 	glDetachShader(program, vertex);
 	glDetachShader(program, fragment);
 	glDeleteShader(vertex);
@@ -64,7 +77,7 @@ void Shaders::SetInt(std::string_view name, int value) const {
 
 void Shaders::SetIntArray(std::string_view name, int* value) const {
 	auto& info = GetUniformInfo(name);
-	glUniform1iv(info.location, info.count, value);
+	glUniform1iv(info.location, 16, value);
 }
 
 void Shaders::SetFloat(std::string_view name, float value) const {

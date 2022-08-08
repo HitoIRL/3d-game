@@ -9,25 +9,35 @@
 #include "Texture.hpp"
 
 struct Vertex {
+	Vertex(const glm::vec3& position, const glm::vec2& texCoords) : position(position), texCoords(texCoords) {}
+
 	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 texCoord;
+	glm::vec2 texCoords;
+};
+
+class RawModel {
+public:
+	RawModel(const std::vector<Vertex>& vertices, const std::vector<std::uint32_t>& indices);
+	~RawModel();
+
+	void Draw() const;
+	void BindVAO(bool state) const;
+private:
+	std::uint32_t vao, vbo, ibo, indicesSize;
 };
 
 class Model {
 public:
 	Model(std::string_view path);
-	~Model();
 
 	void Draw() const;
-	void BindVAO(bool state) const;
+
+	const std::unique_ptr<RawModel>& GetRawModel() const { return rawModel; }
 private:
 	void CreateMesh(const aiMesh* mesh, const aiScene* scene);
 	std::vector<std::shared_ptr<Texture>> FetchTextures(const aiMaterial* material, aiTextureType type);
 
-	std::uint32_t vao, buffer, indicesOffset;
+	std::unique_ptr<RawModel> rawModel;
 	std::string directory;
 	std::vector<std::shared_ptr<Texture>> textures;
-	std::vector<Vertex> vertices; // not splitting into meshes limits our buffer size to ~32MB*
-	std::vector<std::uint32_t> indices;
 };
