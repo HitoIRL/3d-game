@@ -13,7 +13,7 @@ Terrain::Terrain(const glm::uvec2& grid, const Texture& texture) {
 			const glm::vec3 position = { (float)j / ((float)VertexCount - 1) * Size, -5.0f, (float)i / ((float)VertexCount - 1) * Size };
 			const glm::vec2 texCoords = { (float)j / ((float)VertexCount - 1), (float)i / ((float)VertexCount - 1) };
 
-			vertices.emplace_back(position, texCoords);
+			vertices.emplace_back(position, texCoords, 0);
 		}
 
 	std::vector<std::uint32_t> indices;

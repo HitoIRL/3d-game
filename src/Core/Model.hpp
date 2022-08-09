@@ -9,10 +9,11 @@
 #include "Texture.hpp"
 
 struct Vertex {
-	Vertex(const glm::vec3& position, const glm::vec2& texCoords) : position(position), texCoords(texCoords) {}
+	Vertex(const glm::vec3& position, const glm::vec2& texCoords, int texIndex) : position(position), texCoords(texCoords), texIndex(texIndex) {}
 
 	glm::vec3 position;
 	glm::vec2 texCoords;
+	int texIndex;
 };
 
 class RawModel {

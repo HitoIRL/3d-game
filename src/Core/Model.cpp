@@ -31,6 +31,10 @@ RawModel::RawModel(const std::vector<Vertex>& vertices, const std::vector<std::u
 	glVertexArrayAttribFormat(vao, attribIndex, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texCoords));
 	glVertexArrayAttribBinding(vao, attribIndex++, 0);
 
+	glEnableVertexArrayAttrib(vao, attribIndex);
+	glVertexArrayAttribIFormat(vao, attribIndex, 1, GL_INT, offsetof(Vertex, texIndex));
+	glVertexArrayAttribBinding(vao, attribIndex++, 0);
+
 	// attach buffers
 	glVertexArrayVertexBuffer(vao, 0, vbo, 0, sizeof(Vertex));
 	glVertexArrayElementBuffer(vao, ibo);
@@ -77,12 +81,13 @@ void Model::CreateMesh(const aiMesh* mesh, const aiScene* scene) {
 	for (auto i = 0u; i < mesh->mNumVertices; i++) {
 		aiVector3D zero(0);
 		const auto position = mesh->mVertices[i];
-		const auto normal = mesh->HasNormals() ? mesh->mNormals[i] : zero;
+		//const auto normal = mesh->HasNormals() ? mesh->mNormals[i] : zero;
 		const auto texCoords = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][i] : zero;
 
 		Vertex vertex {
 				{ position.x, position.y, position.z },
 				{ texCoords.x, texCoords.y },
+				1
 		};
 		vertices.emplace_back(vertex);
 	}

@@ -26,7 +26,6 @@ void Renderer::Render(const glm::mat4& viewMatrix) {
 		auto& [key, value] = model;
 		auto& rawModel = key->GetRawModel();
 		rawModel->BindVAO(true);
-		shaders->SetInt("texIndex", 1);
 		for (auto& entity : value) {
 			shaders->SetMat4("model", entity.GetModelMatrix());
 			key->Draw();
@@ -39,10 +38,8 @@ void Renderer::Render(const glm::mat4& viewMatrix) {
 		auto& [key, value] = terrain;
 		key->BindVAO(true);
 		shaders->SetMat4("model", glm::mat4(1));
-		shaders->SetInt("texIndex", 0);
-		for (auto& entity : value) {
+		for (auto& entity : value)
 			key->Draw();
-		}
 		key->BindVAO(false);
 	}
 	terrains.clear();
