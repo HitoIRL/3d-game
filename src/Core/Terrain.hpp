@@ -6,7 +6,7 @@
 
 class Terrain {
 public:
-	Terrain(const glm::uvec2& grid, const Texture& texture);
+	Terrain(const glm::uvec2& grid, const std::shared_ptr<Texture>& texture);
 
 	const std::shared_ptr<RawModel>& GetRawModel() const { return rawModel; }
 private:

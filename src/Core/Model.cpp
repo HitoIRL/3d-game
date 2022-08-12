@@ -54,7 +54,7 @@ void RawModel::BindVAO(bool state) const {
 	glBindVertexArray(state ? vao : 0);
 }
 
-Model::Model(std::string_view path) : directory(path.substr(0, path.find_last_of('/'))) {
+Model::Model(std::string_view path, const std::shared_ptr<Texture>& texture) : directory(path.substr(0, path.find_last_of('/'))), diffuseTexture(texture) {
 	Assimp::Importer importer;
 	auto scene = importer.ReadFile(path.data(), aiProcess_Triangulate | aiProcess_FlipUVs);
 
@@ -65,18 +65,26 @@ Model::Model(std::string_view path) : directory(path.substr(0, path.find_last_of
 
 	for (auto i = 0u; i < scene->mNumMeshes; i++) {
 		const auto mesh = scene->mMeshes[i];
-		CreateMesh(mesh, scene);
+		CreateMesh(mesh, scene, texture->GetSlot());
 	}
 }
 
 void Model::Draw() const {
-	for (auto i = 0u; i < textures.size(); i++)
-		textures[i]->Bind(i);
-
 	rawModel->Draw(); // vao binding is handled by renderer
 }
 
-void Model::CreateMesh(const aiMesh* mesh, const aiScene* scene) {
+void Model::BindVAO(bool state) const {
+	if (state && diffuseTexture->IsTransparent()) {
+		glDisable(GL_CULL_FACE);
+	} else if (!state && diffuseTexture->IsTransparent()) {
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
+
+	rawModel->BindVAO(state);
+}
+
+void Model::CreateMesh(const aiMesh* mesh, const aiScene* scene, std::uint16_t textureSlot) {
 	std::vector<Vertex> vertices;
 	for (auto i = 0u; i < mesh->mNumVertices; i++) {
 		aiVector3D zero(0);
@@ -87,7 +95,7 @@ void Model::CreateMesh(const aiMesh* mesh, const aiScene* scene) {
 		Vertex vertex {
 				{ position.x, position.y, position.z },
 				{ texCoords.x, texCoords.y },
-				1
+				textureSlot
 		};
 		vertices.emplace_back(vertex);
 	}
@@ -99,34 +107,21 @@ void Model::CreateMesh(const aiMesh* mesh, const aiScene* scene) {
 			indices.emplace_back(face.mIndices[j]);
 	}
 
-	if (mesh->mMaterialIndex >= 0) {
+	if (mesh->mMaterialIndex > 0) { // tutaj bylo `>=` jak cos
 		const auto material = scene->mMaterials[mesh->mMaterialIndex];
-		auto diffuseMaps = FetchTextures(material, aiTextureType_DIFFUSE);
-		auto specularMaps = FetchTextures(material, aiTextureType_SPECULAR);
+		diffuseTexture = FetchTexture(material, aiTextureType_DIFFUSE);
+		specularTexture = FetchTexture(material, aiTextureType_SPECULAR);
 	};
 
 	rawModel = std::make_unique<RawModel>(vertices, indices);
 }
 
-std::vector<std::shared_ptr<Texture>> Model::FetchTextures(const aiMaterial* material, aiTextureType type) {
-	for (auto i = 0u; i < material->GetTextureCount(type); i++) {
+std::shared_ptr<Texture> Model::FetchTexture(const aiMaterial* material, aiTextureType type) { // game won't be using more than 1 texture so why would I fetch whole vector
+	if (material->GetTextureCount(type) > 0) {
 		aiString str;
-		material->GetTexture(type, i, &str);
-		auto path = directory + "/" + str.C_Str();
-
-		bool skip = false;
-		for (auto& texture : textures) {
-			if (texture->GetPath() == path) {
-				skip = true;
-				break;
-			}
-		}
-
-		if (!skip) {
-			auto texture = std::make_shared<Texture>(path);
-			textures.emplace_back(texture);
-		}
+		material->GetTexture(type, 0, &str);
+		auto path = std::format("{}/{}", directory, str.C_Str());
+		return TextureManager::CreateTexture(path);
 	}
-
-	return textures;
+	return nullptr;
 }

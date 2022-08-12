@@ -5,7 +5,7 @@
 constexpr std::uint32_t VertexCount = 128;
 constexpr std::uint32_t Size = 800;
 
-Terrain::Terrain(const glm::uvec2& grid, const Texture& texture) {
+Terrain::Terrain(const glm::uvec2& grid, const std::shared_ptr<Texture>& texture) {
 	std::vector<Vertex> vertices;
 	vertices.reserve(VertexCount * VertexCount);
 	for (auto i = 0u; i < VertexCount; i++)
@@ -13,7 +13,7 @@ Terrain::Terrain(const glm::uvec2& grid, const Texture& texture) {
 			const glm::vec3 position = { (float)j / ((float)VertexCount - 1) * Size, -5.0f, (float)i / ((float)VertexCount - 1) * Size };
 			const glm::vec2 texCoords = { (float)j / ((float)VertexCount - 1), (float)i / ((float)VertexCount - 1) };
 
-			vertices.emplace_back(position, texCoords, 0);
+			vertices.emplace_back(position, texCoords, texture->GetSlot());
 		}
 
 	std::vector<std::uint32_t> indices;

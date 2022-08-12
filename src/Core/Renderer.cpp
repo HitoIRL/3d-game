@@ -1,11 +1,12 @@
 #include "Renderer.hpp"
 
+#include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "Camera.hpp"
 #include "../Debug/Log.hpp"
 
-Renderer::Renderer(const glm::uvec2& windowSize, const std::shared_ptr<Shaders>& shaders) : shaders(shaders), projectionMatrix(glm::perspective(FOV, (float)windowSize.x / (float)windowSize.y, NEAR_PLANE, FAR_PLANE)) {
+Renderer::Renderer(const glm::uvec2& windowSize, const std::shared_ptr<Shaders>& shaders) : shaders(shaders), projectionMatrix(glm::perspective(FOV, static_cast<float>(windowSize.x) / static_cast<float>(windowSize.y), NEAR_PLANE, FAR_PLANE)) {
 
 }
 
@@ -24,13 +25,12 @@ void Renderer::Render(const glm::mat4& viewMatrix) {
 
 	for (auto& model : models) {
 		auto& [key, value] = model;
-		auto& rawModel = key->GetRawModel();
-		rawModel->BindVAO(true);
+		key->BindVAO(true);
 		for (auto& entity : value) {
 			shaders->SetMat4("model", entity.GetModelMatrix());
 			key->Draw();
 		}
-		rawModel->BindVAO(false);
+		key->BindVAO(false);
 	}
 	models.clear();
 

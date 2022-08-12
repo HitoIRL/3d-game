@@ -1,5 +1,4 @@
 #include <filesystem>
-#include <iostream>
 
 #include "Debug/Log.hpp"
 #include "Core/Window.hpp"
@@ -18,12 +17,20 @@ int main() {
 	auto cubeShaders = std::make_shared<Shaders>("assets/shaders/cube.vs", "assets/shaders/cube.fs");
 	auto camera = std::make_shared<Camera>();
 
-	auto model = std::make_shared<Model>("assets/stall/stall.obj");
+	auto stallTexture = TextureManager::CreateTexture("assets/stall/stallTexture.png");
+	auto terrainTexture = TextureManager::CreateTexture("assets/grass.png");
+	auto grassTexture = TextureManager::CreateTexture("assets/grassTexture.png");
+
+	auto stallModel = std::make_shared<Model>("assets/stall/stall.obj", stallTexture);
 	std::vector<Entity> entities;
 	for (auto i = 0u; i < 6; i++)
-		entities.emplace_back(model, glm::vec3(i * 10, 0, -5), glm::vec3(0), 1.0f);
-	Texture stallTexture("assets/stall/stallTexture.png");
-	Texture terrainTexture("assets/grass.png");
+		entities.emplace_back(stallModel, glm::vec3(10 * i, 0, 0), glm::vec3(0), 1.0f);
+
+	Terrain terrain1({ 0, 0 }, terrainTexture);
+
+	auto grassModel = std::make_shared<Model>("assets/grassModel.obj", grassTexture);
+	Entity grassEntity(grassModel, { 40, 0, 0 }, glm::vec3(0), 1.0f);
+
 	Renderer renderer(window->GetSize(), cubeShaders);
 
 	cubeShaders->Bind(true);
@@ -33,16 +40,14 @@ int main() {
 		samplers[i] = i;
 	cubeShaders->SetIntArray("samplers[0]", samplers);
 
-	Terrain terrain1({ 0, 0 }, terrainTexture);
-
-	terrainTexture.Bind(0);
-	stallTexture.Bind(1);
 	while (window->IsOpen()) {
 		Input::Update();
 		camera->Update();
 
 		for (auto& entity : entities)
 			renderer.Add(entity);
+
+		renderer.Add(grassEntity);
 
 		renderer.Add(terrain1);
 		renderer.Render(camera->GetViewMatrix());

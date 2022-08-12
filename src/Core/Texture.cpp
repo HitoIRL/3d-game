@@ -7,12 +7,14 @@
 
 #include "../Debug/Log.hpp"
 
-Texture::Texture(std::string_view path) : path(path) {
+Texture::Texture(std::string_view path, std::uint16_t slot) : path(path), slot(slot), transparent(false) {
 	glm::ivec2 size;
 	int channels;
 
 	LOG_INFO("Creating new texture from '{}'", path);
 	if (const auto data = stbi_load(path.data(), &size.x, &size.y, &channels, 0)) {
+		transparent = channels == 4;
+
 		glCreateTextures(GL_TEXTURE_2D, 1, &id);
 
 		glTextureParameteri(id, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -28,6 +30,8 @@ Texture::Texture(std::string_view path) : path(path) {
 		LOG_ERROR("Failed to load texture '{}'", path);
 		std::exit(EXIT_FAILURE);
 	}
+
+	glBindTextureUnit(slot, id);
 }
 
 Texture::~Texture() {
@@ -35,6 +39,8 @@ Texture::~Texture() {
 	glDeleteTextures(1, &id);
 }
 
-void Texture::Bind(std::uint16_t slot) const {
-	glBindTextureUnit(slot, id);
+std::uint16_t freeTexture = 0;
+
+std::shared_ptr<Texture> TextureManager::CreateTexture(std::string_view path) {
+	return std::make_shared<Texture>(path, freeTexture++);
 }

@@ -68,9 +68,6 @@ Window::Window(std::string_view title, const glm::uvec2& size) : size(size) {
 
 	glViewport(0, 0, size.x, size.y);
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_STENCIL_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
 
 	// enabling debug output
 	glEnable(GL_DEBUG_OUTPUT);
@@ -85,9 +82,7 @@ Window::~Window() {
 
 bool Window::IsOpen() const {
 	glfwSwapBuffers(_window);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT /*| GL_STENCIL_BUFFER_BIT*/);
-	//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glfwPollEvents();
-
 	return !glfwWindowShouldClose(_window);
 }

@@ -29,16 +29,15 @@ private:
 
 class Model {
 public:
-	Model(std::string_view path);
+	Model(std::string_view path, const std::shared_ptr<Texture>& texture);
 
 	void Draw() const;
-
-	const std::unique_ptr<RawModel>& GetRawModel() const { return rawModel; }
+	void BindVAO(bool state) const;
 private:
-	void CreateMesh(const aiMesh* mesh, const aiScene* scene);
-	std::vector<std::shared_ptr<Texture>> FetchTextures(const aiMaterial* material, aiTextureType type);
+	void CreateMesh(const aiMesh* mesh, const aiScene* scene, std::uint16_t textureSlot);
+	std::shared_ptr<Texture> FetchTexture(const aiMaterial* material, aiTextureType type);
 
 	std::unique_ptr<RawModel> rawModel;
 	std::string directory;
-	std::vector<std::shared_ptr<Texture>> textures;
+	std::shared_ptr<Texture> diffuseTexture, specularTexture;
 };
